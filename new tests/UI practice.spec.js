@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-test.only("Create Post", async ({ page }) => {
+test("Create Post", async ({ page }) => {
   await page.goto("https://www.reddit.com/");
   await page.locator('#login-button').click();
   await page.locator('input[name="username"]').click();
