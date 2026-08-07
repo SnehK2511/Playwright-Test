@@ -27,5 +27,8 @@ test.only("Print Product name", async({page})=>{
     await page.locator('input[type="email"]').fill('alexsmith1998@example.com');
     await page.locator('input[type="password"]').fill('Test@1234');
     await page.locator('input[type="submit"]').click();
+    await page.waitForLoadState('networkidle');
+    const productNames = await page.locator('.card-body b').allTextContents();
+    console.log(productNames[0]);
     await page.pause();
 });
