@@ -1,4 +1,5 @@
 const { test, expect } = require('@playwright/test');
+const { count } = require('node:console');
 
 test("Register New User", async ({ page }) => {
     await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
@@ -23,7 +24,7 @@ test("Register New User", async ({ page }) => {
 
 });
 
-test.only("Login & Order ID Print", async ({ page }) => {
+test.only("E2E Purchase Flow", async ({ page }) => {
     await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
     await page.locator('input[type="email"]').fill('alexsmith7@example.com');
     await page.locator('input[type="password"]').fill('Test@1234');
@@ -77,7 +78,20 @@ test.only("Login & Order ID Print", async ({ page }) => {
     console.log(confirmationMessage);
     const Order_detals = await page.locator('label.ng-star-inserted').textContent();
     const Order_ID = await Order_detals.split(' | ');
-    console.log(Order_ID[1]);
+    const Neworder = await (Order_ID[1]);
+    console.log(Neworder);
     await page.locator('button[routerlink="/dashboard/myorders"]').first().click();
+    await page.locator('[scope="row"]').first().waitFor();
+
+    const OrderIDs = await page.locator('[scope="row"]').allTextContents();
+    const Total = await page.locator('[scope="row"]').count();
+
+    for (let i = 0; i < Total; i++) {
+        if (OrderIDs[i].trim() === Neworder.trim()) {
+            console.log('Your Matched Odered ID is :-', OrderIDs[i]);
+            await page.locator('tbody tr').nth(i).locator('.btn.btn-primary').click();
+        }
+        break;
+    }
     await page.pause();
 });
