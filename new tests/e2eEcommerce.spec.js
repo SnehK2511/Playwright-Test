@@ -1,12 +1,12 @@
 const { test, expect } = require('@playwright/test');
 const { count } = require('node:console');
 
-test("Register New User", async ({ page }) => {
+test.only("Register New User", async ({ page }) => {
     await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
     await page.click('.text-reset');
     await page.locator('#firstName').fill('Alex');
     await page.locator('#lastName').fill('Smith');
-    await page.locator('#userEmail').fill('alexsmith77@example.com');
+    await page.locator('#userEmail').fill('alexsmith15@example.com');
     await page.locator('#userPassword').fill('Test@1234');
     await page.locator('[formcontrolname="occupation"]').selectOption('Engineer');
     await page.locator('#userMobile').fill('1234567890');
@@ -14,9 +14,8 @@ test("Register New User", async ({ page }) => {
     await page.locator('input[type="checkbox"]').check();
     await page.locator('#confirmPassword').fill('Test@1234');
     await page.locator('#login').click();
-    await page.locator('input[type="submit"]').click();
     await page.locator('.btn.btn-primary').click();
-    await page.locator('input[type="email"]').fill('alexsmith77@example.com');
+    await page.locator('input[type="email"]').fill('alexsmith17@example.com');
     await page.locator('input[type="password"]').fill('Test@1234');
     await page.locator('input[type="submit"]').click();
     await page.waitForLoadState('networkidle');
@@ -24,7 +23,7 @@ test("Register New User", async ({ page }) => {
 
 });
 
-test.only("E2E Purchase Flow", async ({ page }) => {
+test("E2E Purchase Flow", async ({ page }) => {
     await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
     await page.locator('input[type="email"]').fill('alexsmith77@example.com');
     await page.locator('input[type="password"]').fill('Test@1234');
@@ -62,6 +61,8 @@ test.only("E2E Purchase Flow", async ({ page }) => {
     await expect(email).toBeVisible();
     await page.locator('[placeholder="Select Country"]').click();
     await page.locator('[placeholder="Select Country"]').pressSequentially("Ind");
+    
+
     await page.locator('.ta-item.list-group-item.ng-star-inserted').nth(1).click();
     await page.locator('select.input.ddl').first().selectOption('02');
     await page.locator('select.input.ddl').last().selectOption('27');

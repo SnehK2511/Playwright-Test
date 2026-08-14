@@ -19,7 +19,7 @@ const config = ({
     timeout: 40 * 1000,
   },
    reporter: 'html',
-  use: {browsername: 'chromium',
+  use: {browserName: 'chromium',
     headless: false,
   },
 
