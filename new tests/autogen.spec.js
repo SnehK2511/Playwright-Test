@@ -1,33 +1,33 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect, request } = require('@playwright/test');
+const LoginData = {userEmail: "alexsmith1998@example.com", userPassword: "Test@1234"}
+let LoginToken;
 
+test.beforeAll(async()=>
+{
+    const Request = await request.newContext();
+    const LoginURL = await Request.post('https://rahulshettyacademy.com/api/ecom/auth/login',
+        {
+            data: LoginData
+        }
+    )  
+    expect(LoginURL.ok()).toBeTruthy();
+    const NewJsonData = await LoginURL.json();
+    LoginToken = NewJsonData.token; 
+    console.log(LoginToken);
 
-test.only("Register New User", async ({ page }) => {
-    await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
-    await page.click('.text-reset');
-    await page.locator('#firstName').fill('Alex');
-    await page.locator('#lastName').fill('Smith');
-    await page.locator('#userEmail').fill('alexsmith15@example.com');
-    await page.locator('#userPassword').fill('Test@1234');
-    await page.locator('[formcontrolname="occupation"]').selectOption('Engineer');
-    await page.locator('#userMobile').fill('1234567890');
-    await page.locator('input[value="Male"]').check();
-    await page.locator('input[type="checkbox"]').check();
-    await page.locator('#confirmPassword').fill('Test@1234');
-    await page.locator('#login').click();
-    await page.locator('.btn.btn-primary').click();
-    await page.locator('input[type="email"]').fill('alexsmith17@example.com');
-    await page.locator('input[type="password"]').fill('Test@1234');
-    await page.locator('input[type="submit"]').click();
-    await page.waitForLoadState('networkidle');
-    await page.pause();
+})
+test("Api Testing", async({page}) =>{
+   await page.addInitScript(value =>
+    {
+        window.localStorage.setItem('token', value);
+    }, LoginToken);
 
-});
-
-test("E2E Purchase Flow", async ({ page }) => {
-    await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
-    await page.locator('input[type="email"]').fill('alexsmith77@example.com');
-    await page.locator('input[type="password"]').fill('Test@1234');
-    await page.locator('input[type="submit"]').click();
+    
+    
+    // await page.locator('input[type="email"]').fill('alexsmith77@example.com');
+    // await page.locator('input[type="password"]').fill('Test@1234');
+    // await page.locator('input[type="submit"]').click();
+    await page.goto("https://rahulshettyacademy.com/client");
     const productName = "ZARA COAT 3";
     const products = page.locator(".card-body");
     await products.first().waitFor();
@@ -94,5 +94,5 @@ test("E2E Purchase Flow", async ({ page }) => {
         }
         break;
     }
-    await page.pause();
-});
+
+})

@@ -1,32 +1,1064 @@
-Handling static Select dropdown options with Playwright
+# 🎭 PLAYWRIGHT NOTES
 
-If Id is present
-css --> tagname#id (or)  #id
+## Easy Guide for Learning + Interview Revision
 
+---
 
-If class attribute is present
-css --> tagname.class (or) .class
+# 1. CSS LOCATORS
 
-Write css based on any Attribute
-css --> [attribute='value']
+=================
 
+CSS locators are used to **identify elements on a web page**.
 
-Write Css with traversing from Parent to child
-css -->  parenttagname >> childtagname
+---
 
-If needs to write the locator based on text
-text=''
+## A. LOCATOR USING ID
 
-If we want to access tables header and row
-css ---> Parent tag name  child tag name [ tbody td th]
+If an element has an `id` attribute, we can locate it using `#`.
 
-In the previous lecture, we used the following step to enter characters into an edit dropbox:
+### Syntax 1:
 
-await page.locator("[placeholder*='Country']").pressSequentially("ind");
-This step may occasionally fail if the application server is slow due to heavy traffic. In such cases, you can introduce a delay and rewrite the step as:
+```js
+page.locator("tagname#id")
+```
 
-await page.locator("[placeholder*='Country']").pressSequentially("ind", { delay: 150 });
-Here, a delay of 150 milliseconds is introduced between each key press.
-That means it enters  i → (delay 150 ms) → enters n → (delay 150 ms) → enters d
+Example:
 
-By doing this, you give the application enough time to respond with the relevant options.
+```js
+page.locator("input#username")
+```
+
+### Syntax 2:
+
+```js
+page.locator("#id")
+```
+
+Example:
+
+```js
+page.locator("#username")
+```
+
+### Easy to Remember:
+
+```text
+# = ID
+```
+
+---
+
+## B. LOCATOR USING CLASS
+
+If an element has a `class` attribute, we can use `.`.
+
+### Syntax 1:
+
+```js
+page.locator("tagname.class")
+```
+
+Example:
+
+```js
+page.locator("input.form-control")
+```
+
+### Syntax 2:
+
+```js
+page.locator(".class")
+```
+
+Example:
+
+```js
+page.locator(".form-control")
+```
+
+### Easy to Remember:
+
+```text
+. = CLASS
+```
+
+---
+
+## C. LOCATOR USING ATTRIBUTE
+
+We can locate an element using any HTML attribute.
+
+### Syntax:
+
+```js
+page.locator("[attribute='value']")
+```
+
+Example:
+
+```js
+page.locator("[placeholder='Username']")
+```
+
+This means:
+
+> Find an element whose `placeholder` is exactly `Username`.
+
+---
+
+### ATTRIBUTE CONTAINS VALUE
+
+If we want to match only **part of an attribute value**, use `*=`.
+
+Example:
+
+```js
+page.locator("[placeholder*='Country']")
+```
+
+### Meaning:
+
+```text
+*= → Contains
+```
+
+For example:
+
+```text
+placeholder = "Select Country"
+```
+
+This locator will work:
+
+```js
+[placeholder*='Country']
+```
+
+because `"Country"` is present inside `"Select Country"`.
+
+---
+
+# 2. PARENT → CHILD TRAVERSING
+
+==============================
+
+We can locate a child element inside a parent element.
+
+### Syntax:
+
+```js
+page.locator("parent >> child")
+```
+
+Example:
+
+```js
+page.locator("div >> input")
+```
+
+### Meaning:
+
+> Find an `input` element inside a `div`.
+
+### Easy to Remember:
+
+```text
+Parent
+   ↓
+ Child
+```
+
+`>>` means:
+
+```text
+Parent → Child
+```
+
+---
+
+# 3. LOCATOR USING TEXT
+
+=======================
+
+If we want to locate an element using its **visible text**, we can use text.
+
+Example:
+
+```js
+page.locator("text='Login'")
+```
+
+Another example:
+
+```js
+page.locator("text='Add to Cart'")
+```
+
+### Meaning:
+
+> Find an element containing the specified visible text.
+
+---
+
+# 4. HANDLING STATIC SELECT DROPDOWNS
+
+=====================================
+
+For a normal HTML `<select>` dropdown, use:
+
+```js
+selectOption()
+```
+
+Example HTML:
+
+```html
+<select>
+    <option value="IN">India</option>
+    <option value="US">USA</option>
+</select>
+```
+
+---
+
+## Select using value
+
+```js
+await page.locator("select").selectOption("IN");
+```
+
+---
+
+## Select using visible label
+
+```js
+await page.locator("select").selectOption({
+    label: "India"
+});
+```
+
+---
+
+### IMPORTANT
+
+`selectOption()` is mainly used for a **real HTML `<select>` dropdown**.
+
+For custom/dynamic dropdowns, usually:
+
+```text
+Click dropdown
+     ↓
+Type/search if required
+     ↓
+Wait for options
+     ↓
+Click required option
+```
+
+---
+
+# 5. HANDLING TABLES
+
+====================
+
+Important HTML table tags:
+
+```html
+<table>
+    <thead>
+        <tr>
+            <th>Header</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>Data</td>
+        </tr>
+    </tbody>
+</table>
+```
+
+---
+
+## Important Table Tags
+
+| Tag     | Meaning              |
+| ------- | -------------------- |
+| `table` | Complete table       |
+| `thead` | Table header section |
+| `th`    | Header cell          |
+| `tbody` | Table body           |
+| `tr`    | Table row            |
+| `td`    | Table data/cell      |
+
+---
+
+## Common Table Locators
+
+### Table headers
+
+```js
+page.locator("table thead th")
+```
+
+### Table rows
+
+```js
+page.locator("table tbody tr")
+```
+
+### Table cells
+
+```js
+page.locator("table tbody td")
+```
+
+### Easy way to remember:
+
+```text
+table
+│
+├── thead
+│     └── th → Header
+│
+└── tbody
+      └── tr → Row
+            └── td → Cell
+```
+
+---
+
+# 6. SEARCHABLE / CUSTOM DROPDOWN
+
+=================================
+
+For a searchable dropdown, we may need to type characters one by one.
+
+Use:
+
+```js
+pressSequentially()
+```
+
+Example:
+
+```js
+await page
+    .locator("[placeholder*='Country']")
+    .pressSequentially("ind");
+```
+
+This enters:
+
+```text
+i → n → d
+```
+
+one character at a time.
+
+---
+
+## Adding Delay
+
+If the application is slow or the dropdown options are loaded dynamically:
+
+```js
+await page
+    .locator("[placeholder*='Country']")
+    .pressSequentially("ind", { delay: 150 });
+```
+
+### What does `delay: 150` mean?
+
+It waits **150 milliseconds between each character**.
+
+```text
+i
+ ↓
+wait 150 ms
+ ↓
+n
+ ↓
+wait 150 ms
+ ↓
+d
+```
+
+---
+
+## When should we use delay?
+
+Use a delay when:
+
+1. The application is slow.
+2. Dropdown options are loaded dynamically.
+3. Search sometimes fails because typing is too fast.
+4. The application needs time to respond to each character.
+
+---
+
+# 7. DEBUGGING PLAYWRIGHT TESTS
+
+===============================
+
+To debug a Playwright test, use:
+
+```bash
+npx playwright test "file path" --debug
+```
+
+Example:
+
+```bash
+npx playwright test tests/example.spec.js --debug
+```
+
+---
+
+## Why use `--debug`?
+
+It helps us:
+
+1. Run the test step by step.
+2. Inspect elements.
+3. Check locators.
+4. Find where the test is failing.
+5. Understand how Playwright is interacting with the page.
+
+### Easy to remember:
+
+```text
+--debug = Debug the test
+```
+
+---
+
+# 8. PLAYWRIGHT CODEGEN
+
+=======================
+
+Playwright Codegen automatically generates Playwright code based on our actions.
+
+### Command:
+
+```bash
+npx playwright codegen "Website URL"
+```
+
+Example:
+
+```bash
+npx playwright codegen "https://example.com"
+```
+
+---
+
+## What does Codegen do?
+
+It opens the browser and records our actions.
+
+Example:
+
+```text
+Open Website
+     ↓
+Click Login
+     ↓
+Enter Username
+     ↓
+Enter Password
+     ↓
+Click Submit
+     ↓
+Playwright generates code
+```
+
+---
+
+## Why use Codegen?
+
+1. Learn Playwright syntax.
+2. Find locators.
+3. Quickly create test scripts.
+4. Understand how Playwright interacts with elements.
+
+### Easy to remember:
+
+```text
+Codegen = Record actions + Generate Playwright code
+```
+
+---
+
+# 9. API LOGIN + MULTIPLE USERS
+
+===============================
+
+This is useful when we have **multiple users** and want to get a login token for each user.
+
+For example:
+
+```js
+const users = {
+
+    Kise: {
+        userEmail: "kise@test.com",
+        userPassword: "Test@123"
+    },
+
+    Kagami: {
+        userEmail: "kagami@test.com",
+        userPassword: "Test@456"
+    }
+};
+```
+
+Here:
+
+```text
+Kise   → Email + Password
+Kagami → Email + Password
+```
+
+---
+
+# 10. `Object.entries(users)`
+
+=============================
+
+`Object.entries()` converts an object into an **array of key-value pairs**.
+
+Example:
+
+```js
+Object.entries(users)
+```
+
+It gives approximately:
+
+```js
+[
+    [
+        "Kise",
+        {
+            userEmail: "kise@test.com",
+            userPassword: "Test@123"
+        }
+    ],
+
+    [
+        "Kagami",
+        {
+            userEmail: "kagami@test.com",
+            userPassword: "Test@456"
+        }
+    ]
+]
+```
+
+Each item contains:
+
+```text
+[Key, Value]
+```
+
+So:
+
+```text
+["Kise", Kise's login data]
+
+["Kagami", Kagami's login data]
+```
+
+---
+
+# 11. `[username, loginData]`
+
+=============================
+
+This is called **array destructuring**.
+
+```js
+[username, loginData]
+```
+
+It means:
+
+```text
+First value  → username
+Second value → loginData
+```
+
+For the first loop:
+
+```text
+username = "Kise"
+
+loginData = {
+    userEmail: "kise@test.com",
+    userPassword: "Test@123"
+}
+```
+
+For the second loop:
+
+```text
+username = "Kagami"
+
+loginData = {
+    userEmail: "kagami@test.com",
+    userPassword: "Test@456"
+}
+```
+
+---
+
+# 12. `for...of` + `Object.entries()`
+
+=====================================
+
+Complete code:
+
+```js
+for (const [username, loginData] of Object.entries(users)) {
+
+}
+```
+
+### Simple meaning:
+
+> Take each user from the `users` object, separate the username and login data, and repeat the process for every user.
+
+---
+
+## 🏀 Anime Example
+
+Imagine we have:
+
+```text
+Kise
+ ↓
+🔑 Kise's Login Details
+
+Kagami
+ ↓
+🔑 Kagami's Login Details
+
+Aomine
+ ↓
+🔑 Aomine's Login Details
+```
+
+`Object.entries(users)` gives:
+
+```text
+Player Name + Login Details
+```
+
+Then:
+
+```js
+[username, loginData]
+```
+
+separates them:
+
+```text
+username  → Player Name
+loginData → Login Details
+```
+
+And:
+
+```js
+for...of
+```
+
+repeats this for every player.
+
+---
+
+# 13. MULTIPLE USER API LOGIN
+
+=============================
+
+Example:
+
+```js
+for (const [username, loginData] of Object.entries(users)) {
+
+    const response = await Request.post(
+        "API_LOGIN_URL",
+        {
+            data: loginData
+        }
+    );
+
+    const jsonData = await response.json();
+
+    LoginTokens[username] = jsonData.token;
+}
+```
+
+---
+
+## How does it work?
+
+### First loop — Kise
+
+```text
+username  = Kise
+
+loginData = Kise's email + password
+
+        ↓
+
+API Login
+
+        ↓
+
+Kise's Token
+
+        ↓
+
+LoginTokens["Kise"] = Kise's Token
+```
+
+### Second loop — Kagami
+
+```text
+username  = Kagami
+
+loginData = Kagami's email + password
+
+        ↓
+
+API Login
+
+        ↓
+
+Kagami's Token
+
+        ↓
+
+LoginTokens["Kagami"] = Kagami's Token
+```
+
+Finally:
+
+```js
+LoginTokens = {
+
+    Kise: "Kise_Token",
+
+    Kagami: "Kagami_Token"
+};
+```
+
+---
+
+# 14. USING THE TOKEN WITH `addInitScript()`
+
+=============================================
+
+Once we have the user's token, we can put it into browser `localStorage`.
+
+Example:
+
+```js
+await page.addInitScript(value => {
+
+    window.localStorage.setItem('token', value);
+
+}, LoginTokens.Kise);
+```
+
+### What is happening?
+
+```text
+LoginTokens.Kise
+       ↓
+Kise's Token
+       ↓
+addInitScript()
+       ↓
+localStorage
+       ↓
+token = Kise's Token
+```
+
+Then:
+
+```js
+await page.goto("https://yourwebsite.com");
+```
+
+The application opens and can read the token from `localStorage`.
+
+---
+
+# 15. WHY USE `addInitScript()`?
+
+`addInitScript()` allows us to run JavaScript **before the page's application scripts start**.
+
+So we can put the authentication token into `localStorage` before the application loads.
+
+### Flow:
+
+```text
+Get Token using API
+        ↓
+addInitScript()
+        ↓
+Store Token in localStorage
+        ↓
+page.goto()
+        ↓
+Application loads
+        ↓
+Application reads Token
+        ↓
+User is authenticated
+```
+
+---
+
+# 16. COMPLETE MULTIPLE USER FLOW
+
+=================================
+
+```text
+              USERS OBJECT
+                   ↓
+        Object.entries(users)
+                   ↓
+          for...of loop
+                   ↓
+        ┌──────────┴──────────┐
+        ↓                     ↓
+      Kise                  Kagami
+        ↓                     ↓
+   API Login              API Login
+        ↓                     ↓
+  Kise Token             Kagami Token
+        ↓                     ↓
+ LoginTokens.Kise     LoginTokens.Kagami
+        ↓                     ↓
+        └──────────┬──────────┘
+                   ↓
+            addInitScript()
+                   ↓
+             localStorage
+                   ↓
+              page.goto()
+                   ↓
+          User is authenticated
+```
+
+---
+
+# 17. EASY WAY TO REMEMBER
+
+### `Object.entries(users)`
+
+```text
+Gets every user as [key, value]
+```
+
+### `[username, loginData]`
+
+```text
+Separates key and value
+```
+
+### `for...of`
+
+```text
+Repeats for every user
+```
+
+### `LoginTokens[username]`
+
+```text
+Stores token using username
+```
+
+### `addInitScript()`
+
+```text
+Runs script before page application loads
+```
+
+### `localStorage.setItem()`
+
+```text
+Stores the token in browser storage
+```
+
+---
+
+# 18. QUICK REVISION CHEAT SHEET
+
+=================================
+
+## LOCATORS
+
+```text
+#id
+```
+
+➡️ ID
+
+```text
+.class
+```
+
+➡️ CLASS
+
+```text
+[attribute='value']
+```
+
+➡️ ATTRIBUTE
+
+```text
+[attribute*='value']
+```
+
+➡️ ATTRIBUTE CONTAINS
+
+```text
+parent >> child
+```
+
+➡️ PARENT → CHILD
+
+```text
+text='Login'
+```
+
+➡️ LOCATE BY TEXT
+
+---
+
+## DROPDOWN
+
+```js
+selectOption()
+```
+
+➡️ Static HTML `<select>` dropdown
+
+```js
+pressSequentially()
+```
+
+➡️ Type characters one by one
+
+```js
+{ delay: 150 }
+```
+
+➡️ Wait 150 ms between characters
+
+---
+
+## DEBUGGING
+
+```bash
+npx playwright test "file path" --debug
+```
+
+➡️ Debug Playwright test
+
+---
+
+## CODEGEN
+
+```bash
+npx playwright codegen "Website URL"
+```
+
+➡️ Automatically generate Playwright code
+
+---
+
+## MULTIPLE USERS
+
+```js
+Object.entries(users)
+```
+
+➡️ Convert object into key-value pairs
+
+```js
+for...of
+```
+
+➡️ Loop through each user
+
+```js
+[username, loginData]
+```
+
+➡️ Separate key and value
+
+```js
+LoginTokens[username]
+```
+
+➡️ Store/get token using username
+
+```js
+addInitScript()
+```
+
+➡️ Run JavaScript before page scripts
+
+```js
+localStorage.setItem()
+```
+
+➡️ Store token in browser localStorage
+
+---
+
+# 19. MOST IMPORTANT THINGS TO REMEMBER
+
+========================================
+
+| Concept                  | Remember                       |
+| ------------------------ | ------------------------------ |
+| `#`                      | ID                             |
+| `.`                      | CLASS                          |
+| `[]`                     | ATTRIBUTE                      |
+| `*=`                     | Attribute contains value       |
+| `>>`                     | Parent → Child                 |
+| `text=`                  | Locate by text                 |
+| `selectOption()`         | Static `<select>` dropdown     |
+| `pressSequentially()`    | Type characters one by one     |
+| `delay: 150`             | Wait 150 ms between characters |
+| `--debug`                | Debug Playwright test          |
+| `codegen`                | Generate Playwright code       |
+| `Object.entries()`       | Get key-value pairs            |
+| `for...of`               | Loop through users             |
+| `[username, loginData]`  | Destructure key + value        |
+| `addInitScript()`        | Run script before page loads   |
+| `localStorage.setItem()` | Store token                    |
+
+---
+
+# ⭐ ONE-LINE INTERVIEW ANSWER
+
+### `Object.entries()`
+
+> "`Object.entries()` converts an object into key-value pairs, and I use `for...of` with destructuring to loop through multiple users and get each user's name and login data separately."
+
+### `addInitScript()`
+
+> "`addInitScript()` allows me to execute JavaScript before the application's page scripts start. I can use it to store an authentication token in localStorage before navigating to the application."
+
+### Multiple User Authentication
+
+> "I can store multiple users in an object, use `Object.entries()` to loop through them, call the login API for each user, store each token against the username, and then use the required user's token with `addInitScript()`."
