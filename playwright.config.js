@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig, devices } from '@playwright/test';
+import { trace } from 'node:console';
 
 /**
  * Read environment variables from file.
@@ -19,9 +20,12 @@ const config = ({
     timeout: 40 * 1000,
   },
    reporter: 'html',
-  use: {browserName: 'chromium',
+use: {
+    browserName: 'chromium',
     headless: false,
-  },
+    screenshot: 'on',
+    trace: 'on',
+},
 
 });
 module.exports = config;

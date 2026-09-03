@@ -1,34 +1,19 @@
-const { test, expect, request } = require('@playwright/test');
-const LoginData = {userEmail: "alexsmith1998@example.com", userPassword: "Test@1234"}
-let LoginToken;
+const { test, expect } = require('@playwright/test');
+const { request } = require('node:http');
 
-test.beforeAll(async()=>
-{
-    const Request = await request.newContext();
-    const LoginURL = await Request.post('https://rahulshettyacademy.com/api/ecom/auth/login',
-        {
-            data: LoginData
-        }
-    )  
-    expect(LoginURL.ok()).toBeTruthy();
-    const NewJsonData = await LoginURL.json();
-    LoginToken = NewJsonData.token; 
-    console.log(LoginToken);
+test("E2E Purchase Flow", async ({ page }) => {
 
-})
-test("Api Testing", async({page}) =>{
-   await page.addInitScript(value =>
-    {
-        window.localStorage.setItem('token', value);
-    }, LoginToken);
-
-    
-    
-    // await page.locator('input[type="email"]').fill('alexsmith77@example.com');
-    // await page.locator('input[type="password"]').fill('Test@1234');
-    // await page.locator('input[type="submit"]').click();
-    await page.goto("https://rahulshettyacademy.com/client");
+    // await page.route('**/*.css',route=>route.abort());
+    // await page.route('**/*.{jpg,png,jpeg}',route=>route.abort());
+    await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
+    await page.locator('input[type="email"]').fill('alexsmith77@example.com');
+    await page.locator('input[type="password"]').fill('Test@1234');
+    await page.locator('input[type="submit"]').click();
     const productName = "ZARA COAT 3";
+
+    page.on('request', request => console.log(request.url()));
+    page.on('response', response => console.log(response.url(), response.status()));
+
     const products = page.locator(".card-body");
     await products.first().waitFor();
     const totalProducts = await products.count();
@@ -94,5 +79,5 @@ test("Api Testing", async({page}) =>{
         }
         break;
     }
-
-})
+    await page.pause();
+});
